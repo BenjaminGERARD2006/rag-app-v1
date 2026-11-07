@@ -3,7 +3,9 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const { chunkText, retrieveChunks, tokenize } = require('./src-rag');
+const { chunkText, retrieveChunks, tokenize } = require('./src-rag-v2');
+const { bm25Search, denseSearch, rrfFuse } = require('./src/retrievers');
+const { buildGraph, graphSearch, loadGraph, GRAPH_FILE } = require('./src/concept-graph');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -168,6 +170,42 @@ app.post('/api/words/question', (req,res) => {
   try { const corpus = req.body?.corpus === 'custom' ? 'custom' : 'kestrel'; const question = String(req.body?.question||'').trim(); if(!question) return res.status(400).json({error:'Enter a question first.'}); const docs=getDocsForCorpus(corpus); const size=Math.min(500,Math.max(40,Number(req.body?.chunkSize)||180)); const overlap=Math.min(size-1,Math.max(0,Number(req.body?.overlap)||35)); const chunks=docs.flatMap(d=>chunkText(d.text,size,overlap).map((text,i)=>({source:d.name,documentId:d.id,index:i+1,text}))); const terms=[...new Set(tokenize(question))]; const results=terms.map(word=>({word, found:chunks.some(c=>tokenize(c.text).includes(word)), locations:chunks.filter(c=>tokenize(c.text).includes(word)).map(c=>({source:c.source,chunk:c.index,documentId:c.documentId}))})); res.json({corpus,question,words:results}); }
   catch(e){res.status(500).json({error:`Question analysis failed: ${e.message}`});}
 });
+
+// V3 retriever controls and graph lifecycle. The legacy /api/ask route remains available for V2 compatibility.
+app.get('/api/v3/status', (_req,res) => {
+  let graph=null; try { if (fs.existsSync(GRAPH_FILE)) graph=loadGraph().stats; } catch {}
+  res.json({version:3, denseConfigured:Boolean(process.env.EMBEDDING_MODEL && (process.env.EMBEDDING_API_KEY||process.env.LLM_API_KEY)), bm25Available:true, graphBuilt:Boolean(graph), graphStats:graph});
+});
+app.post('/api/v3/graph/build', async (req,res) => {
+  try {
+    const docs=loadKestrelDocs();
+    const size=Math.min(500,Math.max(40,Number(req.body?.chunkSize)||180));
+    const overlap=Math.min(size-1,Math.max(0,Number(req.body?.overlap)||35));
+    const chunks=getChunks(docs,size,overlap);
+    const graph=await buildGraph(chunks);
+    res.json({ok:true,stats:graph.stats,errors:graph.errors,output:path.relative(__dirname,GRAPH_FILE)});
+  } catch(e) { res.status(500).json({error:e.message}); }
+});
+app.post('/api/v3/retrieve', async (req,res) => {
+  try {
+    const question=String(req.body?.question||'').trim();
+    if(question.length<3) return res.status(400).json({error:'Enter a question with at least 3 characters.'});
+    const corpus=req.body?.corpus==='kestrel'?'kestrel':'custom';
+    const docs=getDocsForCorpus(corpus); if(!docs.length)return res.status(400).json({error:'Selected corpus is empty.'});
+    const size=Math.min(500,Math.max(40,Number(req.body?.chunkSize)||180));
+    const overlap=Math.min(size-1,Math.max(0,Number(req.body?.overlap)||35));
+    const chunks=getChunks(docs,size,overlap); const topK=Math.min(20,Math.max(1,Number(req.body?.topK)||10));
+    const enabled=req.body?.retrievers||{dense:true,bm25:true,graph:false}; const lists=[];
+    if(enabled.bm25!==false)lists.push({name:'bm25',results:bm25Search(question,chunks,topK)});
+    if(enabled.dense!==false)lists.push({name:'dense',results:await denseSearch(question,chunks,topK)});
+    if(enabled.graph){if(corpus!=='kestrel')return res.status(400).json({error:'The Concept Graph is currently defined for the Kestrel corpus only.'});lists.push({name:'graph',results:graphSearch(question,chunks,topK)});}
+    if(!lists.length)return res.status(400).json({error:'Enable at least one retriever.'});
+    const fused=rrfFuse(lists,topK);
+    res.json({question,corpus,retrievers:lists.map(x=>({name:x.name,count:x.results.length})),results:fused});
+  } catch(e) {res.status(500).json({error:e.message});}
+});
+
+app.get('/bm25', (_req,res)=>res.sendFile(path.join(__dirname,'public','bm25.html')));
 app.get('/about', (_req,res)=>res.sendFile(path.join(__dirname,'public','about.html')));
 
 app.listen(PORT, () => console.log(`RAG App V1 running at http://localhost:${PORT}`));

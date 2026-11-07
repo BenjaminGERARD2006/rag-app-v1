@@ -1,13 +1,15 @@
 {
-  "name": "rag-app-v2",
-  "version": "2.0.0",
-  "description": "RAG project V2 with Kestrel corpus, retrieval evaluation and words analytics",
+  "name": "rag-app-v3",
+  "version": "3.0.0",
+  "description": "RAG project V3: BM25, dense retrieval, RRF and provenance-backed concept graph",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "test": "node --test",
-    "evaluate": "node scripts/evaluate.js"
+    "evaluate": "node scripts/evaluate.js",
+    "evaluate:v3": "node scripts/evaluate-v3.js",
+    "build:graph": "node scripts/build-graph.js"
   },
   "engines": {
     "node": ">=18"
