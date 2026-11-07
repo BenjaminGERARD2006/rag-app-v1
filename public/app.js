@@ -71,3 +71,28 @@ async function loadWords(word='') { try { const data=await api(`/api/words?corpu
 let wordSearchTimer; $('word-search').addEventListener('input',()=>{clearTimeout(wordSearchTimer);wordSearchTimer=setTimeout(()=>loadWords($('word-search').value.trim()),180)});
 $('analyze-question').addEventListener('click',async()=>{const question=$('word-question').value.trim();if(!question)return;try{const r=await api('/api/words/question',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({corpus:$('corpus-select').value,question})});$('question-word-results').innerHTML=`<div class="question-word-summary">${r.words.filter(w=>w.found).length} of ${r.words.length} words found in the corpus</div>`+r.words.map(w=>`<div class="question-word ${w.found?'found':'missing'}"><b>${esc(w.word)}</b><span>${w.found?`${w.locations.length} matching chunks`:'Not found'}</span>${w.found?`<small>${esc([...new Set(w.locations.map(l=>l.source))].join(', '))}</small>`:''}</div>`).join('');}catch(e){$('question-word-results').textContent=e.message;}});
 $('run-evaluation').addEventListener('click',async()=>{const btn=$('run-evaluation');btn.disabled=true;$('evaluation-message').textContent='Running retrieval evaluation…';try{const base=Number($('eval-chunk-size').value)||180, overlap=Number($('eval-overlap').value)||35;const r=await api('/api/evaluation/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({corpora:['kestrel','custom'],configs:[{name:'baseline',chunkSize:base,overlap},{name:'smaller-chunks',chunkSize:Math.max(40,Math.floor(base/2)),overlap:Math.min(Math.max(0,Math.floor(overlap/2)),Math.max(0,Math.floor(base/2)-1))}]})});$('evaluation-message').textContent=`Saved results to ${r.savedTo}. Custom corpus results are omitted until you replace the question template with your own questions.`;$('evaluation-results').innerHTML=r.runs.map(run=>`<article class="eval-run"><h3>${esc(run.corpus)} · ${esc(run.config.name)}</h3><p>${run.answerable} answerable questions · ${run.total} total</p><div class="metric-grid">${Object.entries(run.summary).map(([k,v])=>`<div><small>${k.replace('recallAt','Recall@')}</small><b>${v===null?'—':(v*100).toFixed(1)+'%'}</b></div>`).join('')}</div><details><summary>Results by question type</summary><pre>${esc(JSON.stringify(run.byType,null,2))}</pre></details></article>`).join('');}catch(e){$('evaluation-message').textContent=e.message;}finally{btn.disabled=false;}});
+
+// V3 retriever controls
+const v3Message = (text) => { $('v3-message').textContent = text; };
+$('v3-build-graph')?.addEventListener('click', async () => {
+  const button = $('v3-build-graph'); button.disabled = true;
+  v3Message('Building the Kestrel graph. This may take several minutes and use LLM credits…');
+  try {
+    const result = await api('/api/v3/graph/build', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chunkSize:180,overlap:35}) });
+    v3Message(`Graph built: ${result.stats.triples} triples, ${result.stats.entities} entities, ${result.stats.errors} extraction errors. Saved to ${result.output}.`);
+  } catch (e) { v3Message(`Graph build failed: ${e.message}`); }
+  finally { button.disabled = false; }
+});
+$('v3-retrieve')?.addEventListener('click', async () => {
+  const question = $('v3-question').value.trim();
+  if (question.length < 3) return v3Message('Enter a question of at least 3 characters.');
+  const retrievers = { dense:$('v3-dense').checked, bm25:$('v3-bm25').checked, graph:$('v3-graph').checked };
+  if (!Object.values(retrievers).some(Boolean)) return v3Message('Enable at least one retriever.');
+  const button = $('v3-retrieve'); button.disabled = true; v3Message('Retrieving and fusing passages…');
+  try {
+    const result = await api('/api/v3/retrieve', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,corpus:$('corpus-select').value,topK:10,chunkSize:180,overlap:35,retrievers})});
+    $('v3-results').innerHTML = result.results.map((r,i) => `<article class="eval-run"><h4>#${i+1} · ${esc(r.source)} · Chunk ${r.index+1}</h4><p>${esc(r.text)}</p><small>Found by: ${esc((r.foundBy||[]).map(x=>`${x.retriever} (rank ${x.rank})`).join(', ') || r.retriever || 'unknown')} · RRF ${Number(r.rrfScore||r.score||0).toFixed(4)}</small>${r.matchedTriples?.length?`<details><summary>Graph triples behind this result</summary><pre>${esc(JSON.stringify(r.matchedTriples,null,2))}</pre></details>`:''}</article>`).join('') || '<p>No matching passages returned.</p>';
+    v3Message(`Completed. ${result.results.length} fused passages from ${result.retrievers.map(x=>`${x.name}: ${x.count}`).join(', ')}.`);
+  } catch(e) { v3Message(`Retrieval failed: ${e.message}`); }
+  finally { button.disabled = false; }
+});

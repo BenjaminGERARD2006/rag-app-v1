@@ -1,0 +1,178 @@
+{
+  "schema": {
+    "entity": [
+      "Product",
+      "ErrorCode",
+      "Team",
+      "Service",
+      "Policy",
+      "Feature",
+      "Person",
+      "System"
+    ],
+    "relation": [
+      "CAUSES",
+      "RESOLVED_BY",
+      "OWNED_BY",
+      "ROUTES_TO",
+      "REQUIRES",
+      "APPLIES_TO",
+      "PART_OF",
+      "ESCALATES_TO",
+      "RELATED_TO"
+    ]
+  },
+  "generatedAt": "2026-11-07T16:16:12.949Z",
+  "chunkCount": 34,
+  "triples": [],
+  "errors": [
+    {
+      "chunkId": "kestrel_1-chunk-1",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_1-chunk-2",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_1-chunk-3",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_1-chunk-4",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_1-chunk-5",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-1",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-2",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-3",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-4",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-5",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_2-chunk-6",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-1",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-2",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-3",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-4",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-5",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-6",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-7",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-8",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-9",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_3-chunk-10",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_4-chunk-1",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_4-chunk-2",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_4-chunk-3",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_4-chunk-4",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-1",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-2",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-3",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-4",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-5",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-6",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-7",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-8",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    },
+    {
+      "chunkId": "kestrel_5-chunk-9",
+      "error": "This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://aistudio.google.com/docs/get-started)."
+    }
+  ],
+  "stats": {
+    "triples": 0,
+    "entities": 0,
+    "relations": 0,
+    "errors": 34,
+    "llmCalls": 34,
+    "buildMs": 6232,
+    "usageReported": 0,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "totalTokens": 0
+  }
+}

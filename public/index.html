@@ -9,7 +9,7 @@
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
   <header class="topbar">
     <a class="brand" href="#" aria-label="Atlas home"><div class="brand-mark"><span>✳</span></div><div><h1>atlas<span class="brand-dot">.</span></h1><p>DOCUMENT INTELLIGENCE</p></div></a>
-    <div class="topbar-right"><span class="live-dot"></span><span id="status" class="status">Checking configuration…</span><span class="topbar-divider"></span><span class="version-tag">V2 · EVALUATION</span></div>
+    <div class="topbar-right"><span class="live-dot"></span><span id="status" class="status">Checking configuration…</span><span class="topbar-divider"></span><span class="version-tag">V3 · HYBRID RETRIEVAL</span></div>
   </header>
   <main class="layout">
     <aside class="sidebar">
@@ -39,10 +39,23 @@
       <section id="welcome" class="empty-results"><div class="empty-orbit"><div class="orbit-core">✳</div><span class="orbit-dot dot-a"></span><span class="orbit-dot dot-b"></span><span class="orbit-dot dot-c"></span></div><h3>Your next insight starts here</h3><p>Ask a question above to turn your documents into useful answers, with sources you can inspect.</p><div class="empty-steps"><span><b>01</b> Add sources</span><i></i><span><b>02</b> Ask a question</span><i></i><span><b>03</b> Explore evidence</span></div></section>
       </div>
       <section id="words-view" class="tool-view" hidden><div class="tool-heading"><p class="eyebrow">CORPUS EXPLORER</p><h2>Words Analytics</h2><p>Explore vocabulary, frequency, and where terms appear in your selected corpus.</p></div><div class="tool-grid"><article class="tool-card"><h3>Corpus vocabulary</h3><div id="words-stats" class="tool-stats">Loading corpus statistics…</div><label class="tool-label">Search a word<input id="word-search" placeholder="e.g. billing" autocomplete="off"></label><div id="word-results" class="word-results"></div></article><article class="tool-card"><h3>Question mode</h3><p class="tool-muted">Find which question words exist in the corpus and where they occur.</p><textarea id="word-question" rows="4" placeholder="Type a question to inspect its words…"></textarea><button id="analyze-question" class="button button-primary" type="button">Analyze question ↗</button><div id="question-word-results" class="word-results"></div></article></div></section>
-      <section id="evaluation-view" class="tool-view" hidden><div class="tool-heading"><p class="eyebrow">MEASURE RETRIEVAL</p><h2>Evaluation Lab</h2><p>Compare retrieval configurations on the Kestrel corpus and your own documents.</p></div><div class="tool-card"><div class="eval-controls"><label class="tool-label">Chunk size (words)<input id="eval-chunk-size" type="number" min="40" max="500" value="180"></label><label class="tool-label">Overlap (words)<input id="eval-overlap" type="number" min="0" max="499" value="35"></label><button id="run-evaluation" class="button button-primary" type="button">Run two configurations ↗</button></div><p id="evaluation-message" class="tool-muted">Runs Recall@1, @3, @5 and @10. Results are saved under results/.</p><div id="evaluation-results" class="evaluation-results"></div></div></section>
+      <section id="evaluation-view" class="tool-view" hidden><div class="tool-heading"><p class="eyebrow">MEASURE RETRIEVAL</p><h2>Evaluation Lab</h2><p>Compare retrieval configurations on the Kestrel corpus and your own documents.</p></div><div class="tool-card"><div class="eval-controls"><label class="tool-label">Chunk size (words)<input id="eval-chunk-size" type="number" min="40" max="500" value="180"></label><label class="tool-label">Overlap (words)<input id="eval-overlap" type="number" min="0" max="499" value="35"></label><button id="run-evaluation" class="button button-primary" type="button">Run two configurations ↗</button></div><p id="evaluation-message" class="tool-muted">Runs Recall@1, @3, @5 and @10. Results are saved under results/.</p><div id="evaluation-results" class="evaluation-results"></div></div>
+      <div class="tool-card" style="margin-top:16px">
+        <div class="tool-heading"><p class="eyebrow">V3 RETRIEVAL</p><h3>Retriever controls</h3><p>Enable individual retrievers. Results are combined using Reciprocal Rank Fusion.</p></div>
+        <label class="tool-label">Question<input id="v3-question" type="text" placeholder="Ask a question about the selected corpus"></label>
+        <div class="eval-controls" style="margin-top:12px">
+          <label><input type="checkbox" id="v3-dense" checked> Dense embeddings</label>
+          <label><input type="checkbox" id="v3-bm25" checked> BM25</label>
+          <label><input type="checkbox" id="v3-graph"> Concept Graph (Kestrel only)</label>
+          <button id="v3-retrieve" class="button button-primary" type="button">Retrieve ↗</button>
+          <button id="v3-build-graph" class="button button-secondary" type="button">Build Kestrel graph</button>
+        </div>
+        <p id="v3-message" class="tool-muted">Graph extraction requires LLM_API_KEY and LLM_MODEL in .env. Dense retrieval requires embedding credentials.</p>
+        <div id="v3-results" class="evaluation-results"></div>
+      </div></section>
     </section>
   </main>
   <div id="chunk-modal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-head"><div><p class="eyebrow">SOURCE EXPLORER</p><h3 id="modal-title">Document passage</h3></div><button id="close-modal" class="modal-close" type="button" aria-label="Close source viewer">×</button></div><div id="modal-meta" class="modal-meta"></div><pre id="modal-text" class="modal-text"></pre><div class="modal-footer"><span>↳ Retrieved evidence</span><button id="modal-done" class="button button-primary" type="button">Done</button></div></div></div>
-  <footer><span class="footer-brand">✳ atlas.</span><span>V2 prototype · BM25-style keyword retrieval · Don’t upload confidential documents to an unapproved provider.</span></footer>
+  <footer><span class="footer-brand">✳ atlas.</span><span>V3 prototype · Dense + BM25 + Concept Graph · Don’t upload confidential documents to an unapproved provider.</span></footer>
   <script src="/app.js"></script>
 </body></html>
