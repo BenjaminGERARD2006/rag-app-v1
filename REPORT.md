@@ -2,10 +2,11 @@
 
 > Complete the team/member and human-assessment sections in your own words before submission. Measured values below are taken from the V3 evaluation output pasted by the student in this conversation. They are not a substitute for rerunning the final packaged code and retaining its JSON output.
 
-## Team and contributions
+## Team Members and Contributions
 
-- Members: [complete]
-- Contributions: [record actual individual contributions]
+| Benjamin Gérard | Project coordination, RAG pipeline integration, dense retrieval and BM25 implementation, hybrid retrieval, Git management, and final project delivery. |
+| Lok Pradeep Tonny | Concept Graph implementation, entity and relation extraction, and graph retrieval integration. |
+| Hetvi Fadadu | Evaluation and testing, retrieval performance analysis, documentation, and report preparation. |
 
 ## Implementation
 
