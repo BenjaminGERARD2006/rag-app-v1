@@ -21,11 +21,20 @@ async function refreshDocs() {
   $('documents').innerHTML = docs.map(d => `<article class="doc-item"><div class="file-icon">${esc(d.type.toUpperCase())}</div><div class="doc-meta"><strong>${esc(d.name)}</strong><span>${formatSize(d.chars)}${d.builtin ? ' · provided corpus' : ''}</span></div>${d.builtin ? '<span class="builtin-tag">KB</span>' : `<button class="delete-button" title="Remove ${esc(d.name)}" data-delete="${esc(d.id)}" aria-label="Delete document">×</button>`}</article>`).join('');
   $('documents').querySelectorAll('[data-delete]').forEach(btn => btn.addEventListener('click', async () => { if (!confirm('Remove this document from the knowledge base?')) return; try { await api(`/api/documents/${encodeURIComponent(btn.dataset.delete)}`, { method: 'DELETE' }); await refreshDocs(); message('upload-message', 'Document removed from your knowledge base.', 'success'); } catch(e) { message('upload-message', e.message, 'error'); } }));
 }
+$('upload-trace').addEventListener('click', async () => {
+  const id = $('upload-trace').dataset.traceId;
+  if (!id) return;
+  try {
+    const trace = await api(`/api/traces/${encodeURIComponent(id)}`);
+    $('upload-trace-content').textContent = JSON.stringify(trace, null, 2);
+    $('upload-trace-content').hidden = false;
+  } catch (e) { message('upload-message', e.message, 'error'); }
+});
 async function uploadFile(file) {
   if (!file) return;
   if (!/\.(txt|md)$/i.test(file.name)) return message('upload-message', 'Please choose a .txt or .md file.', 'error');
   const fd = new FormData(); fd.append('file', file); const button = document.querySelector('#upload-form button'); button.disabled = true; button.innerHTML = '<span>↻</span> Adding document…'; message('upload-message', 'Adding your file to the knowledge base…');
-  try { const r = await api('/api/documents', { method: 'POST', body: fd }); await refreshDocs(); $('file-input').value = ''; message('upload-message', `Added ${r.document.name} · ${r.chunksCreated} chunks indexed.`, 'success'); }
+  try { const r = await api('/api/documents', { method: 'POST', body: fd }); await refreshDocs(); $('file-input').value = ''; message('upload-message', `Added ${r.document.name} · ${r.chunksCreated} chunks indexed · ${r.redactions || 0} personal-data item(s) redacted.`, 'success'); $('upload-trace').dataset.traceId = r.traceId || ''; $('upload-trace').hidden = !r.traceId; }
   catch(err) { message('upload-message', err.message, 'error'); }
   finally { button.disabled = false; button.innerHTML = '<span>＋</span> Add to knowledge base'; }
 }
@@ -46,16 +55,51 @@ function closeSourceModal() { $('chunk-modal').hidden = true; }
 $('close-modal').addEventListener('click', closeSourceModal); $('modal-done').addEventListener('click', closeSourceModal);
 $('chunk-modal').addEventListener('click', e => { if (e.target === $('chunk-modal')) closeSourceModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSourceModal(); });
+let conversationHistory = [];
+$('clear-conversation').addEventListener('click', () => {
+  conversationHistory = [];
+  $('conversation-status').textContent = 'New conversation started.';
+  $('suggestions-panel').hidden = true;
+});
+function renderSuggestions(items) {
+  const panel = $('suggestions-panel');
+  if (!Array.isArray(items) || !items.length) { panel.hidden = true; return; }
+  $('suggestions').innerHTML = items.map(q => `<button type="button" class="prompt-chip" data-followup="${esc(q)}">${esc(q)}</button>`).join('');
+  $('suggestions').querySelectorAll('[data-followup]').forEach(btn => btn.addEventListener('click', () => {
+    $('question').value = btn.dataset.followup;
+    $('question-count').textContent = `${$('question').value.length} / 1000`;
+    $('question').focus();
+  }));
+  panel.hidden = false;
+}
+$('trace-details').addEventListener('click', async () => {
+  const id = $('trace-details').dataset.traceId;
+  if (!id) return;
+  try {
+    const trace = await api(`/api/traces/${encodeURIComponent(id)}`);
+    $('trace-content').textContent = JSON.stringify(trace, null, 2);
+    $('trace-details-panel').hidden = false;
+    $('trace-status').textContent = `Trace ${id.slice(0, 8)} · ${trace.status}`;
+  } catch (err) { $('trace-status').textContent = err.message; }
+});
 $('ask-form').addEventListener('submit', async e => {
   e.preventDefault(); const question = $('question').value.trim(); if (!question) return;
   const selected = [...document.querySelectorAll('input[name="selected-document"]:checked')].map(el => el.value);
   if (document.querySelectorAll('input[name="selected-document"]').length && !selected.length) return message('ask-message', 'Choose at least one source to search.', 'error');
   const button = $('ask-button'); button.disabled = true; button.innerHTML = '<span>Searching your sources…</span><span class="button-arrow">↻</span>'; message('ask-message', 'Finding relevant passages and preparing your answer…', ''); $('welcome').hidden = true; $('answer-section').hidden = true;
   try {
-    const r = await api('/api/ask', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ question, corpus: $('corpus-select').value, topK: Number($('top-k').value), chunkSize: Number($('chunk-size').value), overlap: Number($('overlap').value), documentIds: selected }) });
+    const r = await api('/api/ask', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ question, corpus: $('corpus-select').value, topK: Number($('top-k').value), chunkSize: Number($('chunk-size').value), overlap: Number($('overlap').value), documentIds: selected, history: conversationHistory }) });
+    $('trace-details').disabled = !r.traceId;
+    $('trace-details').dataset.traceId = r.traceId || '';
+    $('trace-details-panel').hidden = true;
+    $('trace-status').textContent = r.traceId ? 'Trace ready · open Details to inspect each step.' : 'No trace returned.';
     $('answer').textContent = r.answer; $('model-label').textContent = r.model || 'LLM'; $('source-count').textContent = r.sources.length;
     $('sources').innerHTML = r.sources.map((s, i) => `<article class="source-card"><button type="button" class="source-open" data-source-index="${i}"><div class="source-top"><span class="source-tag">${esc(s.label)}</span><strong>${esc(s.name)}</strong><span class="chunk-label">Chunk ${s.chunk}</span></div><p>${esc(s.excerpt)}${s.excerpt.length >= 700 ? '…' : ''}</p><div class="score">Relevance score: ${s.score} · Click to inspect full passage ↗</div></button></article>`).join('');
     $('sources').querySelectorAll('[data-source-index]').forEach(btn => btn.addEventListener('click', async () => { const s = r.sources[Number(btn.dataset.sourceIndex)]; try { const chunks = await api(`/api/documents/${encodeURIComponent(s.documentId)}/chunks?chunkSize=${encodeURIComponent($('chunk-size').value)}&overlap=${encodeURIComponent($('overlap').value)}`); const chunk = chunks.chunks.find(c => c.index === Number(s.chunk)); openSourceModal(chunks.document.name, s.chunk, chunk ? chunk.text : s.text || s.excerpt); } catch { openSourceModal(s.name, s.chunk, s.text || s.excerpt); } }));
+    conversationHistory.push({ role: 'user', content: question }, { role: 'assistant', content: r.answer });
+    conversationHistory = conversationHistory.slice(-8);
+    $('conversation-status').textContent = `Conversation active · ${Math.ceil(conversationHistory.length / 2)} turn(s)`;
+    renderSuggestions(r.suggestions);
     const u = r.usage; $('usage').textContent = u ? `Token usage · input ${u.prompt_tokens ?? '—'} · output ${u.completion_tokens ?? '—'} · total ${u.total_tokens ?? '—'}` : 'Token usage was not provided by the model provider.';
     $('answer-section').hidden = false; message('ask-message', 'Answer ready · Review the evidence below to verify the response.', 'success'); $('answer-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(err) { $('welcome').hidden = false; message('ask-message', err.message, 'error'); }
