@@ -1,7 +1,7 @@
 {
-  "name": "rag-app-v3",
-  "version": "3.0.0",
-  "description": "RAG project V3: BM25, dense retrieval, RRF and provenance-backed concept graph",
+  "name": "atlas-rag-app",
+  "version": "4.0.0",
+  "description": "RAG V4: observable conversational RAG with local personal-data redaction",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
