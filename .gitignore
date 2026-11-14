@@ -5,3 +5,6 @@ node_modules/
 data/documents.json
 results/*.json
 .DS_Store
+
+# Local observability data (may contain operational metadata)
+data/traces/*.jsonl
